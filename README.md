@@ -6,25 +6,13 @@ A basic project template using Grunt and Bower.
 Getting Started
 ---------------
  
-This tutorial uses `grunt` as its build tool. If you don't have `grunt` installed, install it now:
-
-    npm install -g grunt-cli
-
-We will also be using `bower` for package management. If you don't have `bower` installed, install it now:
-
-    npm install -g bower
-
-Now install a grunt instance and plugins locally, as specified in `package.json`:
+You'll need `npm` for this tutorial. Install a grunt instance and plugins locally, as specified in `package.json`:
 
     npm install
 
-And pull required dependencies specified in `bower.json`:
-
-    bower update
-
 You should now be able to build the project and run the test suite:
 
-    grunt
+    npm test
 
 You should see something like the following:
 
@@ -56,3 +44,5 @@ Running "purescript-make:lib" (purescript-make) task
 
 Done, without errors.
 ```
+
+If you want to use `grunt` or `bower`, you can find them in `node_modules/.bin/`, or just install them globally.
