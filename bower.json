@@ -13,6 +13,7 @@
   "dependencies": {
     "purescript-arrays"               : "*",
     "purescript-maybe"                : "*",
+    "purescript-either"                : "*",
     "purescript-foldable-traversable" : "*"
   },
   "devDependencies": {

@@ -19,28 +19,21 @@ module.exports = function(grunt) {
     dotPsci: ["<%=libFiles%>"],
   
     psc: {
-      tests: {
+     all: {
         options: {
-          module: ["Main"],
-          main: true
+          modules: ["Signal.Wire"]
         },
-        src: ["tests/Tests.purs", "<%=libFiles%>"],
-        dest: "tmp/tests.js"
+        src: ["<%=libFiles%>"],
+        dest: "dist/Main.js"
       }
-    },
-    
-    execute: {
-      tests: {
-        src: "tmp/tests.js"
-      }
-    }      
+    }
   });
 
   grunt.loadNpmTasks("grunt-contrib-clean");
   grunt.loadNpmTasks("grunt-purescript");
   grunt.loadNpmTasks("grunt-execute");
   
-  grunt.registerTask("test", ["clean:tests", "psc:tests", "execute:tests"]);
   grunt.registerTask("make", ["pscMake", "dotPsci"]);
-  grunt.registerTask("default", ["test", "make"]);
+  grunt.registerTask("dist", ["psc:all"]);
+  grunt.registerTask("default", ["make"]);
 };
