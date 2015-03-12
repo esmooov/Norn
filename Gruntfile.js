@@ -21,7 +21,7 @@ module.exports = function(grunt) {
     psc: {
      all: {
         options: {
-          modules: ["Signal.Wire"]
+          modules: ["Signal.Norn"]
         },
         src: ["<%=libFiles%>"],
         dest: "dist/Main.js"

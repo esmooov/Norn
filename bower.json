@@ -1,5 +1,5 @@
 {
-  "name": "starter-kit",
+  "name": "norn",
   "private": true,
   "ignore": [
     "**/.*",
@@ -14,7 +14,10 @@
     "purescript-arrays"               : "*",
     "purescript-maybe"                : "*",
     "purescript-either"                : "*",
-    "purescript-foldable-traversable" : "*"
+    "purescript-foldable-traversable" : "*",
+    "purescript-refs"                 : "*",
+    "purescript-maps"                 : "*",
+    "purescript-profunctor"                 : "*"
   },
   "devDependencies": {
     "purescript-math"                 : "*",
