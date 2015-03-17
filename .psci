@@ -18,6 +18,11 @@
 :m bower_components/purescript-exceptions/src/Control/Monad/Eff/Exception.purs
 :m bower_components/purescript-foldable-traversable/src/Data/Foldable.purs
 :m bower_components/purescript-foldable-traversable/src/Data/Traversable.purs
+:m bower_components/purescript-maps/src/Data/Map.purs
+:m bower_components/purescript-maps/src/Data/StrMap.purs
+:m bower_components/purescript-maps/src/Data/StrMap/ST.purs
+:m bower_components/purescript-maps/src/Data/StrMap/ST/Unsafe.purs
+:m bower_components/purescript-maps/src/Data/StrMap/Unsafe.purs
 :m bower_components/purescript-math/src/Math.purs
 :m bower_components/purescript-maybe/src/Data/Maybe.purs
 :m bower_components/purescript-maybe/src/Data/Maybe/Unsafe.purs
@@ -30,9 +35,14 @@
 :m bower_components/purescript-monoid/src/Data/Monoid/First.purs
 :m bower_components/purescript-monoid/src/Data/Monoid/Last.purs
 :m bower_components/purescript-monoid/src/Data/Monoid/Multiplicative.purs
+:m bower_components/purescript-profunctor/src/Data/Profunctor.purs
+:m bower_components/purescript-profunctor/src/Data/Profunctor/Choice.purs
+:m bower_components/purescript-profunctor/src/Data/Profunctor/Strong.purs
 :m bower_components/purescript-quickcheck/src/Test/QuickCheck.purs
 :m bower_components/purescript-quickcheck/src/Test/QuickCheck/Gen.purs
 :m bower_components/purescript-random/src/Control/Monad/Eff/Random.purs
+:m bower_components/purescript-refs/src/Control/Monad/Eff/Ref.purs
+:m bower_components/purescript-refs/src/Control/Monad/Eff/Ref/Unsafe.purs
 :m bower_components/purescript-strings/src/Data/Char/Char.purs
 :m bower_components/purescript-strings/src/Data/String.purs
 :m bower_components/purescript-strings/src/Data/String/Regex.purs

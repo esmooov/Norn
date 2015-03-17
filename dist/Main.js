@@ -3,6 +3,13 @@ var PS = PS || {};
 PS.Prelude = (function () {
     "use strict";
     
+    function cons(e) {
+      return function(l) {
+        return [e].concat(l);
+      };
+    }
+    ;
+    
     function refEq(r1) {
       return function(r2) {
         return r1 === r2;
@@ -113,6 +120,7 @@ PS.Prelude = (function () {
     var $less$times$greater = function (dict) {
         return dict["<*>"];
     };
+    var $colon = cons;
     var $amp$amp = function (dict) {
         return dict["&&"];
     };
@@ -208,6 +216,8 @@ PS.Prelude = (function () {
         liftA1: liftA1, 
         pure: pure, 
         "<*>": $less$times$greater, 
+        cons: cons, 
+        ":": $colon, 
         "const": $$const, 
         eqString: eqString, 
         ordString: ordString, 
@@ -504,24 +514,45 @@ PS.Signal_Norn = (function () {
     var Data_Maybe = PS.Data_Maybe;
     var Data_Function = PS.Data_Function;
     var Data_Profunctor = PS.Data_Profunctor;
+    var Emitter = (function () {
+        function Emitter(value0) {
+            this.value0 = value0;
+        };
+        Emitter.create = function (value0) {
+            return new Emitter(value0);
+        };
+        return Emitter;
+    })();
     var Event = (function () {
-        function Event(value0, value1) {
+        function Event(value0, value1, value2) {
             this.value0 = value0;
             this.value1 = value1;
+            this.value2 = value2;
         };
         Event.create = function (value0) {
             return function (value1) {
-                return new Event(value0, value1);
+                return function (value2) {
+                    return new Event(value0, value1, value2);
+                };
             };
         };
         return Event;
     })();
+    var Cfg = (function () {
+        function Cfg(value0) {
+            this.value0 = value0;
+        };
+        Cfg.create = function (value0) {
+            return new Cfg(value0);
+        };
+        return Cfg;
+    })();
     var onlyAfter = function (_413) {
         return function (_414) {
-            return new Event(_414.value0, function (_412) {
+            return new Event(_414.value0, _414.value1, function (_412) {
                 var _503 = Data_Map.member(Prelude.ordString)(_413)(_412.value1);
                 if (_503) {
-                    return _414.value1(new Data_Tuple.Tuple(_412.value0, _412.value1));
+                    return _414.value2(new Data_Tuple.Tuple(_412.value0, _412.value1));
                 };
                 if (!_503) {
                     return Prelude["return"](Control_Monad_Eff.monadEff)(Prelude.unit);
@@ -531,9 +562,25 @@ PS.Signal_Norn = (function () {
         };
     };
     var main = Debug_Trace.trace("Foob");
+    var attachEvent = function (em) {
+        return function (deps) {
+            return function (ev) {
+                return function (c) {
+                    return Prelude[":"](new Cfg({
+                        emitter: em, 
+                        deps: deps, 
+                        event: ev
+                    }))(c);
+                };
+            };
+        };
+    };
     return {
+        Cfg: Cfg, 
+        Emitter: Emitter, 
         Event: Event, 
         main: main, 
+        attachEvent: attachEvent, 
         onlyAfter: onlyAfter
     };
 })();
