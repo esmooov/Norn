@@ -45,7 +45,8 @@ type Order = [Event]
 data Cfg  = Cfg {emitter :: Emitter,
                  deps :: [String],
                  event :: Event}
-type Config = Graph String Cfg
+data Config = Config (Graph String String) (Map String Event)
+
 
 onlyAfter :: String -> Event -> Event
 onlyAfter s (Event name trans eff) = Event name trans (\(Tuple st h) -> if member s h
@@ -53,11 +54,20 @@ onlyAfter s (Event name trans eff) = Event name trans (\(Tuple st h) -> if membe
                                                                            else return unit)
 
 attachEvent :: Emitter -> [String] -> Event -> Config -> Config
-attachEvent em deps ev (Graph verts edges) = Graph new_verts new_edges
-    where vert_name = eventName ev
-          new_verts = (Cfg {emitter: em, deps: deps, event: ev}) : verts
-          new_edges = foldlArray (\m i -> (Edge i vert_name):m) edges deps
+attachEvent em deps (Event name t e) (Config (Graph verts edges) m) = Config (Graph new_verts new_edges) new_map
+    where new_map = insert name (Event name t e) m
+          new_verts = name : verts
+          new_edges = foldlArray (\m i -> (Edge i name):m) edges deps
 
+cullMaybeList :: forall a. [Maybe a] -> [a]
+cullMaybeList list = foldlArray (\m i -> maybeCons i m) [] list
+    where maybeCons (Just i) m = i:m
+          maybeCons Nothing m = m
+
+generateExecutionOrder :: Config -> [Event]
+generateExecutionOrder (Config graph dict) = final_order
+    where name_order = topSort graph
+          final_order = cullMaybeList $ Data.Array.map (\name -> lookup name dict) name_order
 
 main = do
     trace "Foob"
