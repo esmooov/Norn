@@ -13,11 +13,12 @@
   "dependencies": {
     "purescript-arrays"               : "*",
     "purescript-maybe"                : "*",
-    "purescript-either"                : "*",
+    "purescript-either"               : "*",
     "purescript-foldable-traversable" : "*",
     "purescript-refs"                 : "*",
     "purescript-maps"                 : "*",
-    "purescript-profunctor"                 : "*"
+    "purescript-graphs"               : "*",
+    "purescript-lists"                : "*"
   },
   "devDependencies": {
     "purescript-math"                 : "*",

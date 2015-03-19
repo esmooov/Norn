@@ -124,6 +124,11 @@ PS.Prelude = (function () {
     var $amp$amp = function (dict) {
         return dict["&&"];
     };
+    var $dollar = function (f) {
+        return function (x) {
+            return f(x);
+        };
+    };
     var unsafeCompare = unsafeCompareImpl(LT.value)(EQ.value)(GT.value);
     var unit = {};
     var pure = function (dict) {
@@ -147,9 +152,9 @@ PS.Prelude = (function () {
     /**
      *  | Returns its first argument and ignores its second.
      */
-    var $$const = function (_30) {
-        return function (_31) {
-            return _30;
+    var $$const = function (_72) {
+        return function (_73) {
+            return _72;
         };
     };
     var compare = function (dict) {
@@ -158,8 +163,8 @@ PS.Prelude = (function () {
     var $less = function (__dict_Ord_12) {
         return function (a1) {
             return function (a2) {
-                var _443 = compare(__dict_Ord_12)(a1)(a2);
-                if (_443 instanceof LT) {
+                var _748 = compare(__dict_Ord_12)(a1)(a2);
+                if (_748 instanceof LT) {
                     return true;
                 };
                 return false;
@@ -169,8 +174,8 @@ PS.Prelude = (function () {
     var $less$eq = function (__dict_Ord_13) {
         return function (a1) {
             return function (a2) {
-                var _444 = compare(__dict_Ord_13)(a1)(a2);
-                if (_444 instanceof GT) {
+                var _749 = compare(__dict_Ord_13)(a1)(a2);
+                if (_749 instanceof GT) {
                     return false;
                 };
                 return true;
@@ -218,6 +223,7 @@ PS.Prelude = (function () {
         "<*>": $less$times$greater, 
         cons: cons, 
         ":": $colon, 
+        "$": $dollar, 
         "const": $$const, 
         eqString: eqString, 
         ordString: ordString, 
@@ -311,14 +317,14 @@ PS.Data_Maybe = (function () {
         };
         return Just;
     })();
-    var maybe = function (_90) {
-        return function (_91) {
-            return function (_92) {
-                if (_92 instanceof Nothing) {
-                    return _90;
+    var maybe = function (_142) {
+        return function (_143) {
+            return function (_144) {
+                if (_144 instanceof Nothing) {
+                    return _142;
                 };
-                if (_92 instanceof Just) {
-                    return _91(_92.value0);
+                if (_144 instanceof Just) {
+                    return _143(_144.value0);
                 };
                 throw new Error("Failed pattern match");
             };
@@ -355,6 +361,37 @@ PS.Data_Tuple = (function () {
     })();
     return {
         Tuple: Tuple
+    };
+})();
+var PS = PS || {};
+PS.Data_Foldable = (function () {
+    "use strict";
+    var Prelude = PS.Prelude;
+    var Data_Monoid = PS.Data_Monoid;
+    var Control_Apply = PS.Control_Apply;
+    var Data_Monoid_First = PS.Data_Monoid_First;
+    var Data_Either = PS.Data_Either;
+    var Data_Maybe = PS.Data_Maybe;
+    var Data_Monoid_Additive = PS.Data_Monoid_Additive;
+    var Data_Monoid_Dual = PS.Data_Monoid_Dual;
+    var Data_Monoid_Last = PS.Data_Monoid_Last;
+    var Data_Monoid_Multiplicative = PS.Data_Monoid_Multiplicative;
+    var Data_Tuple = PS.Data_Tuple;
+    
+  function foldlArray(f) {
+    return function(z) {
+      return function(xs) {
+        var acc = z;
+        for (var i = 0, len = xs.length; i < len; ++i) {
+          acc = f(acc)(xs[i]);
+        }
+        return acc;
+      };
+    };
+  }
+  ;
+    return {
+        foldlArray: foldlArray
     };
 })();
 var PS = PS || {};
@@ -419,68 +456,68 @@ PS.Data_Map = (function () {
         };
         return Three;
     })();
-    var lookup = function (__copy___dict_Ord_184) {
-        return function (__copy__378) {
-            return function (__copy__379) {
-                var __dict_Ord_184 = __copy___dict_Ord_184;
-                var _378 = __copy__378;
-                var _379 = __copy__379;
+    var lookup = function (__copy___dict_Ord_428) {
+        return function (__copy__529) {
+            return function (__copy__530) {
+                var __dict_Ord_428 = __copy___dict_Ord_428;
+                var _529 = __copy__529;
+                var _530 = __copy__530;
                 tco: while (true) {
-                    if (_379 instanceof Leaf) {
+                    if (_530 instanceof Leaf) {
                         return Data_Maybe.Nothing.value;
                     };
-                    if (_379 instanceof Two && Prelude["=="](__dict_Ord_184["__superclass_Prelude.Eq_0"]())(_378)(_379.value1)) {
-                        return new Data_Maybe.Just(_379.value2);
+                    if (_530 instanceof Two && Prelude["=="](__dict_Ord_428["__superclass_Prelude.Eq_0"]())(_529)(_530.value1)) {
+                        return new Data_Maybe.Just(_530.value2);
                     };
-                    if (_379 instanceof Two && Prelude["<"](__dict_Ord_184)(_378)(_379.value1)) {
-                        var __tco___dict_Ord_184 = __dict_Ord_184;
-                        var __tco__378 = _378;
-                        var __tco__379 = _379.value0;
-                        __dict_Ord_184 = __tco___dict_Ord_184;
-                        _378 = __tco__378;
-                        _379 = __tco__379;
+                    if (_530 instanceof Two && Prelude["<"](__dict_Ord_428)(_529)(_530.value1)) {
+                        var __tco___dict_Ord_428 = __dict_Ord_428;
+                        var __tco__529 = _529;
+                        var __tco__530 = _530.value0;
+                        __dict_Ord_428 = __tco___dict_Ord_428;
+                        _529 = __tco__529;
+                        _530 = __tco__530;
                         continue tco;
                     };
-                    if (_379 instanceof Two) {
-                        var __tco___dict_Ord_184 = __dict_Ord_184;
-                        var __tco__378 = _378;
-                        var __tco__379 = _379.value3;
-                        __dict_Ord_184 = __tco___dict_Ord_184;
-                        _378 = __tco__378;
-                        _379 = __tco__379;
+                    if (_530 instanceof Two) {
+                        var __tco___dict_Ord_428 = __dict_Ord_428;
+                        var __tco__529 = _529;
+                        var __tco__530 = _530.value3;
+                        __dict_Ord_428 = __tco___dict_Ord_428;
+                        _529 = __tco__529;
+                        _530 = __tco__530;
                         continue tco;
                     };
-                    if (_379 instanceof Three && Prelude["=="](__dict_Ord_184["__superclass_Prelude.Eq_0"]())(_378)(_379.value1)) {
-                        return new Data_Maybe.Just(_379.value2);
+                    if (_530 instanceof Three && Prelude["=="](__dict_Ord_428["__superclass_Prelude.Eq_0"]())(_529)(_530.value1)) {
+                        return new Data_Maybe.Just(_530.value2);
                     };
-                    if (_379 instanceof Three && Prelude["=="](__dict_Ord_184["__superclass_Prelude.Eq_0"]())(_378)(_379.value4)) {
-                        return new Data_Maybe.Just(_379.value5);
+                    if (_530 instanceof Three && Prelude["=="](__dict_Ord_428["__superclass_Prelude.Eq_0"]())(_529)(_530.value4)) {
+                        return new Data_Maybe.Just(_530.value5);
                     };
-                    if (_379 instanceof Three && Prelude["<"](__dict_Ord_184)(_378)(_379.value1)) {
-                        var __tco___dict_Ord_184 = __dict_Ord_184;
-                        var __tco__378 = _378;
-                        var __tco__379 = _379.value0;
-                        __dict_Ord_184 = __tco___dict_Ord_184;
-                        _378 = __tco__378;
-                        _379 = __tco__379;
+                    if (_530 instanceof Three && Prelude["<"](__dict_Ord_428)(_529)(_530.value1)) {
+                        var __tco___dict_Ord_428 = __dict_Ord_428;
+                        var __tco__529 = _529;
+                        var __tco__530 = _530.value0;
+                        __dict_Ord_428 = __tco___dict_Ord_428;
+                        _529 = __tco__529;
+                        _530 = __tco__530;
                         continue tco;
                     };
-                    if (_379 instanceof Three && (Prelude["<"](__dict_Ord_184)(_379.value1)(_378) && Prelude["<="](__dict_Ord_184)(_378)(_379.value4))) {
-                        var __tco___dict_Ord_184 = __dict_Ord_184;
-                        var __tco__378 = _378;
-                        var __tco__379 = _379.value3;
-                        __dict_Ord_184 = __tco___dict_Ord_184;
-                        _378 = __tco__378;
-                        _379 = __tco__379;
+                    if (_530 instanceof Three && (Prelude["<"](__dict_Ord_428)(_530.value1)(_529) && Prelude["<="](__dict_Ord_428)(_529)(_530.value4))) {
+                        var __tco___dict_Ord_428 = __dict_Ord_428;
+                        var __tco__529 = _529;
+                        var __tco__530 = _530.value3;
+                        __dict_Ord_428 = __tco___dict_Ord_428;
+                        _529 = __tco__529;
+                        _530 = __tco__530;
                         continue tco;
                     };
-                    if (_379 instanceof Three) {
-                        var __tco___dict_Ord_184 = __dict_Ord_184;
-                        var __tco__378 = _378;
-                        var __tco__379 = _379.value6;
-                        __dict_Ord_184 = __tco___dict_Ord_184;
-                        _378 = __tco__378;
-                        _379 = __tco__379;
+                    if (_530 instanceof Three) {
+                        var __tco___dict_Ord_428 = __dict_Ord_428;
+                        var __tco__529 = _529;
+                        var __tco__530 = _530.value6;
+                        __dict_Ord_428 = __tco___dict_Ord_428;
+                        _529 = __tco__529;
+                        _530 = __tco__530;
                         continue tco;
                     };
                     throw new Error("Failed pattern match");
@@ -488,10 +525,10 @@ PS.Data_Map = (function () {
             };
         };
     };
-    var member = function (__dict_Ord_185) {
+    var member = function (__dict_Ord_429) {
         return function (k) {
             return function (m) {
-                return Data_Maybe.isJust(lookup(__dict_Ord_185)(k)(m));
+                return Data_Maybe.isJust(lookup(__dict_Ord_429)(k)(m));
             };
         };
     };
@@ -501,10 +538,64 @@ PS.Data_Map = (function () {
     };
 })();
 var PS = PS || {};
+PS.Data_Graph = (function () {
+    "use strict";
+    var Prelude = PS.Prelude;
+    var Control_Monad_Eff = PS.Control_Monad_Eff;
+    var Control_Monad_ST = PS.Control_Monad_ST;
+    var Data_Map = PS.Data_Map;
+    var Control_Monad = PS.Control_Monad;
+    var Data_Maybe = PS.Data_Maybe;
+    var Data_Traversable = PS.Data_Traversable;
+    var Data_Foldable = PS.Data_Foldable;
+    var Data_Array = PS.Data_Array;
+    var $$Math = PS.$$Math;
+    var Data_Set = PS.Data_Set;
+    
+    /**
+     *  | An directed edge between vertices labelled with keys of type `k`.
+     */
+    var Edge = (function () {
+        function Edge(value0, value1) {
+            this.value0 = value0;
+            this.value1 = value1;
+        };
+        Edge.create = function (value0) {
+            return function (value1) {
+                return new Edge(value0, value1);
+            };
+        };
+        return Edge;
+    })();
+    
+    /**
+     *  | A graph with vertices of type `v`.
+     *  |
+     *  | Edges refer to vertices using keys of type `k`.
+     */
+    var Graph = (function () {
+        function Graph(value0, value1) {
+            this.value0 = value0;
+            this.value1 = value1;
+        };
+        Graph.create = function (value0) {
+            return function (value1) {
+                return new Graph(value0, value1);
+            };
+        };
+        return Graph;
+    })();
+    return {
+        Graph: Graph, 
+        Edge: Edge
+    };
+})();
+var PS = PS || {};
 PS.Signal_Norn = (function () {
     "use strict";
-    var Data_Map = PS.Data_Map;
     var Prelude = PS.Prelude;
+    var Data_Map = PS.Data_Map;
+    var Data_Foldable = PS.Data_Foldable;
     var Debug_Trace = PS.Debug_Trace;
     var Control_Monad_Eff = PS.Control_Monad_Eff;
     var Control_Monad_Eff_Ref = PS.Control_Monad_Eff_Ref;
@@ -513,7 +604,12 @@ PS.Signal_Norn = (function () {
     var Data_Tuple = PS.Data_Tuple;
     var Data_Maybe = PS.Data_Maybe;
     var Data_Function = PS.Data_Function;
-    var Data_Profunctor = PS.Data_Profunctor;
+    var Data_Graph = PS.Data_Graph;
+    
+    function emptyNornState(){
+        return {};    
+    }
+;
     var Emitter = (function () {
         function Emitter(value0) {
             this.value0 = value0;
@@ -547,30 +643,50 @@ PS.Signal_Norn = (function () {
         };
         return Cfg;
     })();
-    var onlyAfter = function (_413) {
-        return function (_414) {
-            return new Event(_414.value0, _414.value1, function (_412) {
-                var _503 = Data_Map.member(Prelude.ordString)(_413)(_412.value1);
-                if (_503) {
-                    return _414.value2(new Data_Tuple.Tuple(_412.value0, _412.value1));
+    var onlyAfter = function (_714) {
+        return function (_715) {
+            return new Event(_715.value0, _715.value1, function (_712) {
+                var _808 = Data_Map.member(Prelude.ordString)(_714)(_712.value1);
+                if (_808) {
+                    return _715.value2(new Data_Tuple.Tuple(_712.value0, _712.value1));
                 };
-                if (!_503) {
+                if (!_808) {
                     return Prelude["return"](Control_Monad_Eff.monadEff)(Prelude.unit);
                 };
                 throw new Error("Failed pattern match");
             });
         };
     };
+    var noopEvent = function (name) {
+        return function __do() {
+            var _52 = emptyNornState();
+            return new Event(name, function (_710) {
+                return _52;
+            }, function (_711) {
+                return Prelude["return"](Control_Monad_Eff.monadEff)(Prelude.unit);
+            });
+        };
+    };
     var main = Debug_Trace.trace("Foob");
-    var attachEvent = function (em) {
-        return function (deps) {
-            return function (ev) {
-                return function (c) {
-                    return Prelude[":"](new Cfg({
-                        emitter: em, 
-                        deps: deps, 
-                        event: ev
-                    }))(c);
+    var eventName = function (_713) {
+        return _713.value0;
+    };
+    var attachEvent = function (_716) {
+        return function (_717) {
+            return function (_718) {
+                return function (_719) {
+                    var vert_name = eventName(_718);
+                    var new_verts = Prelude[":"](new Cfg({
+                        emitter: _716, 
+                        deps: _717, 
+                        event: _718
+                    }))(_719.value0);
+                    var new_edges = Data_Foldable.foldlArray(function (m) {
+                        return function (i) {
+                            return Prelude[":"](new Data_Graph.Edge(i, vert_name))(m);
+                        };
+                    })(_719.value1)(_717);
+                    return new Data_Graph.Graph(new_verts, new_edges);
                 };
             };
         };
@@ -581,6 +697,9 @@ PS.Signal_Norn = (function () {
         Event: Event, 
         main: main, 
         attachEvent: attachEvent, 
-        onlyAfter: onlyAfter
+        onlyAfter: onlyAfter, 
+        noopEvent: noopEvent, 
+        eventName: eventName, 
+        emptyNornState: emptyNornState
     };
 })();
