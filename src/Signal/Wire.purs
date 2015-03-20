@@ -80,7 +80,7 @@ main = do
     event_d <- noopEvent "foo-bar son"
     let emitter = Emitter {el: "document", event: "click"}
     let c_d = attachEvent emitter ["foo","bar"] event_d emptyConfig
-    let c_a = attachEvent emitter ["baz"] event_a c_d
+    let c_a = attachEvent emitter ["bar"] event_a c_d
     let c_b = attachEvent emitter ["foo"] event_b c_a
     let c_c = attachEvent emitter [] event_c c_b
     print $ Data.Array.map (\(Event s _ _) -> s) $ generateExecutionOrder c_c
