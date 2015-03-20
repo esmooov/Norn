@@ -85,6 +85,13 @@ PS.Prelude = (function () {
       return !b;
     }
     ;
+    
+    function concatString(s1) {
+      return function(s2) {
+        return s1 + s2;
+      };
+    }
+    ;
     var Unit = function (x) {
         return x;
     };
@@ -221,6 +228,7 @@ PS.Prelude = (function () {
             };
         };
     });
+    var semigroupString = new Semigroup(concatString);
     var pure = function (dict) {
         return dict.pure;
     };
@@ -372,7 +380,8 @@ PS.Prelude = (function () {
         eqString: eqString, 
         eqNumber: eqNumber, 
         ordString: ordString, 
-        boolLikeBoolean: boolLikeBoolean
+        boolLikeBoolean: boolLikeBoolean, 
+        semigroupString: semigroupString
     };
 })();
 var PS = PS || {};
@@ -1819,6 +1828,17 @@ PS.Data_Graph = (function () {
         };
         throw new Error("Failed pattern match");
     };
+    var showSCC = function (__dict_Show_463) {
+        return new Prelude.Show(function (_588) {
+            if (_588 instanceof AcyclicSCC) {
+                return "AcyclicSCC (" + (Prelude.show(__dict_Show_463)(_588.value0) + ")");
+            };
+            if (_588 instanceof CyclicSCC) {
+                return "CyclicSCC " + Prelude.show(Prelude.showArray(__dict_Show_463))(_588.value0);
+            };
+            throw new Error("Failed pattern match");
+        });
+    };
     var popUntil = function (__copy___dict_Eq_464) {
         return function (__copy__582) {
             return function (__copy__583) {
@@ -1837,16 +1857,16 @@ PS.Data_Graph = (function () {
                                 };
                             };
                             if (_584.length >= 1) {
-                                var _1252 = _584.slice(1);
+                                var _1255 = _584.slice(1);
                                 if (Prelude["=="](__dict_Eq_464)(_582(_583))(_582(_584[0]))) {
                                     return {
-                                        path: _1252, 
+                                        path: _1255, 
                                         component: Prelude[":"](_584[0])(_585)
                                     };
                                 };
                             };
                             if (_584.length >= 1) {
-                                var _1254 = _584.slice(1);
+                                var _1257 = _584.slice(1);
                                 var __tco___dict_Eq_464 = __dict_Eq_464;
                                 var __tco__582 = _582;
                                 var __tco__583 = _583;
@@ -1854,7 +1874,7 @@ PS.Data_Graph = (function () {
                                 __dict_Eq_464 = __tco___dict_Eq_464;
                                 _582 = __tco__582;
                                 _583 = __tco__583;
-                                _584 = _1254;
+                                _584 = _1257;
                                 _585 = __tco__585;
                                 continue tco;
                             };
@@ -1983,11 +2003,11 @@ PS.Data_Graph = (function () {
                                         return Control_Monad_ST.readSTRef(_38);
                                     };
                                     if (_591.length >= 1) {
-                                        var _1288 = _591.slice(1);
+                                        var _1291 = _591.slice(1);
                                         return function __do() {
                                             var _29 = indexOf(_591[0])();
                                             Control_Monad.when(Control_Monad_Eff.monadEff)(Data_Maybe.isNothing(_29))(strongConnect(_579(_591[0])))();
-                                            return go(_1288)();
+                                            return go(_1291)();
                                         };
                                     };
                                     throw new Error("Failed pattern match");
@@ -1998,6 +2018,15 @@ PS.Data_Graph = (function () {
                     };
                 };
             };
+        };
+    };
+    
+    /**
+     *  | Compute the strongly connected components of a graph.
+     */
+    var scc = function (__dict_Eq_467) {
+        return function (__dict_Ord_468) {
+            return scc$prime(__dict_Eq_467)(__dict_Ord_468)(Prelude.id(Prelude.categoryArr))(Prelude.id(Prelude.categoryArr));
         };
     };
     
@@ -2033,7 +2062,9 @@ PS.Data_Graph = (function () {
         "topSort'": topSort$prime, 
         topSort: topSort, 
         "scc'": scc$prime, 
-        vertices: vertices
+        scc: scc, 
+        vertices: vertices, 
+        showSCC: showSCC
     };
 })();
 var PS = PS || {};
@@ -2046,9 +2077,7 @@ PS.Signal_Norn = (function () {
     var Data_Array = PS.Data_Array;
     var Debug_Trace = PS.Debug_Trace;
     var Control_Monad_Eff = PS.Control_Monad_Eff;
-    var Control_Monad_Eff_Ref = PS.Control_Monad_Eff_Ref;
     var Control_Monad_ST = PS.Control_Monad_ST;
-    var Data_Either = PS.Data_Either;
     var Data_Tuple = PS.Data_Tuple;
     var Data_Maybe = PS.Data_Maybe;
     var Data_Function = PS.Data_Function;
@@ -2057,15 +2086,6 @@ PS.Signal_Norn = (function () {
         return {};    
     }
 ;
-    var Emitter = (function () {
-        function Emitter(value0) {
-            this.value0 = value0;
-        };
-        Emitter.create = function (value0) {
-            return new Emitter(value0);
-        };
-        return Emitter;
-    })();
     var Event = (function () {
         function Event(value0, value1, value2) {
             this.value0 = value0;
@@ -2081,35 +2101,17 @@ PS.Signal_Norn = (function () {
         };
         return Event;
     })();
-    var Config = (function () {
-        function Config(value0, value1) {
-            this.value0 = value0;
-            this.value1 = value1;
-        };
-        Config.create = function (value0) {
-            return function (value1) {
-                return new Config(value0, value1);
-            };
-        };
-        return Config;
-    })();
-    var Cfg = (function () {
-        function Cfg(value0) {
-            this.value0 = value0;
-        };
-        Cfg.create = function (value0) {
-            return new Cfg(value0);
-        };
-        return Cfg;
-    })();
-    var onlyAfter = function (_719) {
-        return function (_720) {
-            return new Event(_720.value0, _720.value1, function (_716) {
-                var _1294 = Data_Map.member(Prelude.ordString)(_719)(_716.value1);
-                if (_1294) {
-                    return _720.value2(new Data_Tuple.Tuple(_716.value0, _716.value1));
+    var verts = function (_719) {
+        return _719.value0;
+    };
+    var onlyAfter = function (_721) {
+        return function (_722) {
+            return new Event(_722.value0, _722.value1, function (_716) {
+                var _1300 = Data_Map.member(Prelude.ordString)(_721)(_716.value1);
+                if (_1300) {
+                    return _722.value2(new Data_Tuple.Tuple(_716.value0, _716.value1));
                 };
-                if (!_1294) {
+                if (!_1300) {
                     return Prelude["return"](Control_Monad_Eff.monadEff)(Prelude.unit);
                 };
                 throw new Error("Failed pattern match");
@@ -2129,7 +2131,13 @@ PS.Signal_Norn = (function () {
     var eventName = function (_718) {
         return _718.value0;
     };
-    var emptyConfig = new Config(new Data_Graph.Graph([  ], [  ]), Data_Map.empty);
+    var emptyConfig = {
+        graph: new Data_Graph.Graph([  ], [  ]), 
+        dict: Data_Map.empty
+    };
+    var edges = function (_720) {
+        return _720.value1;
+    };
     var cullMaybeList = function (list) {
         var maybeCons = function (_726) {
             return function (_727) {
@@ -2148,55 +2156,71 @@ PS.Signal_Norn = (function () {
             };
         })([  ])(list);
     };
-    var generateExecutionOrder = function (_725) {
-        var name_order = Data_Graph.topSort(Prelude.eqString)(Prelude.ordString)(_725.value0);
+    var generateExecutionOrder = function (emitter) {
+        var name_order = Data_Graph.topSort(Prelude.eqString)(Prelude.ordString)(emitter.config.graph);
         var final_order = Data_Array.reverse(cullMaybeList(Data_Array.map(function (name) {
-            return Data_Map.lookup(Prelude.ordString)(name)(_725.value1);
+            return Data_Map.lookup(Prelude.ordString)(name)(emitter.config.dict);
         })(name_order)));
         return final_order;
     };
-    var attachEvent = function (_721) {
-        return function (_722) {
-            return function (_723) {
-                return function (_724) {
-                    var new_verts = Prelude[":"](_723.value0)(_724.value0.value0);
-                    var new_map = Data_Map.insert(Prelude.ordString)(_723.value0)(new Event(_723.value0, _723.value1, _723.value2))(_724.value1);
-                    var new_edges = Data_Foldable.foldlArray(function (m_1) {
-                        return function (i) {
-                            return Prelude[":"](new Data_Graph.Edge(i, _723.value0))(m_1);
-                        };
-                    })(_724.value0.value1)(_722);
-                    return new Config(new Data_Graph.Graph(new_verts, new_edges), new_map);
+    var attachEvent = function (_723) {
+        return function (_724) {
+            return function (_725) {
+                var new_verts = Prelude[":"](_725.value0)(verts(_723.config.graph));
+                var new_edges = Data_Foldable.foldlArray(function (m) {
+                    return function (i) {
+                        return Prelude[":"](new Data_Graph.Edge(i, _725.value0))(m);
+                    };
+                })(edges(_723.config.graph))(_724);
+                var new_map = Data_Map.insert(Prelude.ordString)(_725.value0)(new Event(_725.value0, _725.value1, _725.value2))(_723.config.dict);
+                var new_conf = {
+                    graph: new Data_Graph.Graph(new_verts, new_edges), 
+                    dict: new_map
+                };
+                return {
+                    el: _723.el, 
+                    event: _723.event, 
+                    config: new_conf
                 };
             };
         };
     };
+    
+    /**
+     * foreign import _finalizeEvents """
+     * function _finalizeEvents(config, order){
+     * }
+     * """ :: forall r. Fn2 Config [Event] (Eff (ne :: NornEff | r) Unit)
+     * finalizeEvents :: Config -> Eff (ne :: NornEff | r) Unit 
+     * finalizeEvents (Config _ dict)  = do
+     * let order = generateExecutionOrder config
+     * runFn2 _finalizeEvents dict order
+     */
     var main = function __do() {
         var _56 = noopEvent("foo")();
         var _55 = noopEvent("bar")();
         var _54 = noopEvent("baz")();
         var _53 = noopEvent("foo-bar son")();
         return (function () {
-            var emitter = new Emitter({
+            var emitter = {
                 el: "document", 
-                event: "click"
-            });
-            var c_d = attachEvent(emitter)([ "foo", "bar" ])(_53)(emptyConfig);
-            var c_a = attachEvent(emitter)([ "baz" ])(_56)(c_d);
-            var c_b = attachEvent(emitter)([ "foo" ])(_55)(c_a);
-            var c_c = attachEvent(emitter)([  ])(_54)(c_b);
+                event: "click", 
+                config: emptyConfig
+            };
+            var c_a = attachEvent(emitter)([ "bar" ])(_56);
+            var c_b = attachEvent(c_a)([ "baz" ])(_55);
+            var c_c = attachEvent(c_b)([  ])(_54);
+            var c_d = attachEvent(c_c)([ "foo", "bar" ])(_53);
             return function __do() {
                 Debug_Trace.print(Prelude.showArray(Prelude.showString))(Data_Array.map(function (_717) {
                     return _717.value0;
-                })(generateExecutionOrder(c_c)))();
+                })(generateExecutionOrder(c_d)))();
+                Debug_Trace.print(Prelude.showArray(Data_Graph.showSCC(Prelude.showString)))(Data_Graph.scc(Prelude.eqString)(Prelude.ordString)(c_d.config.graph))();
                 return Debug_Trace.trace("Foob")();
             };
         })()();
     };
     return {
-        Config: Config, 
-        Cfg: Cfg, 
-        Emitter: Emitter, 
         Event: Event, 
         main: main, 
         generateExecutionOrder: generateExecutionOrder, 
@@ -2204,6 +2228,8 @@ PS.Signal_Norn = (function () {
         attachEvent: attachEvent, 
         onlyAfter: onlyAfter, 
         emptyConfig: emptyConfig, 
+        edges: edges, 
+        verts: verts, 
         noopEvent: noopEvent, 
         eventName: eventName, 
         emptyNornState: emptyNornState
