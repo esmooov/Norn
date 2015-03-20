@@ -12,6 +12,7 @@ import Data.Maybe
 import Data.Function
 import Data.Foldable hiding (lookup)
 import Data.Graph
+import Data.Array (reverse)
 
 foreign import data NornEff :: !
 foreign import data NornState :: *
@@ -47,6 +48,9 @@ data Cfg  = Cfg {emitter :: Emitter,
                  event :: Event}
 data Config = Config (Graph String String) (Map String Event)
 
+emptyConfig :: Config
+emptyConfig = Config (Graph [] []) empty
+
 
 onlyAfter :: String -> Event -> Event
 onlyAfter s (Event name trans eff) = Event name trans (\(Tuple st h) -> if member s h
@@ -67,7 +71,17 @@ cullMaybeList list = foldlArray (\m i -> maybeCons i m) [] list
 generateExecutionOrder :: Config -> [Event]
 generateExecutionOrder (Config graph dict) = final_order
     where name_order = topSort graph
-          final_order = cullMaybeList $ Data.Array.map (\name -> lookup name dict) name_order
+          final_order = reverse $ cullMaybeList $ Data.Array.map (\name -> lookup name dict) name_order
 
 main = do
+    event_a <- noopEvent "foo"
+    event_b <- noopEvent "bar"
+    event_c <- noopEvent "baz"
+    event_d <- noopEvent "foo-bar son"
+    let emitter = Emitter {el: "document", event: "click"}
+    let c_d = attachEvent emitter ["foo","bar"] event_d emptyConfig
+    let c_a = attachEvent emitter ["baz"] event_a c_d
+    let c_b = attachEvent emitter ["foo"] event_b c_a
+    let c_c = attachEvent emitter [] event_c c_b
+    print $ Data.Array.map (\(Event s _ _) -> s) $ generateExecutionOrder c_c
     trace "Foob"
